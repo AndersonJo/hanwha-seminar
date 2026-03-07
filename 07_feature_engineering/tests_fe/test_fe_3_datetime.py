@@ -25,7 +25,12 @@ def extract_date_features(df: pd.DataFrame, col: str = 'datetime') -> pd.DataFra
     """
     df = df.copy()
     # --- 코드를 작성하세요 ---
-
+    df['year'] = df[col].dt.year
+    df['month'] = df[col].dt.month
+    df['day'] = df[col].dt.day
+    df['hour'] = df[col].dt.hour
+    df['dayofweek'] = df[col].dt.dayofweek
+    df['quarter'] = df[col].dt.quarter
     # -----------------------
     return df
 
@@ -84,9 +89,9 @@ def extract_binary_features(df: pd.DataFrame, col: str = 'datetime') -> pd.DataF
     - is_month_end: 월의 마지막 날이면 True
     """
     df = df.copy()
-    # --- 코드를 작성하세요 ---
-
-    # -----------------------
+    df['is_weekend'] = df[col].dt.dayofweek.isin([5, 6]).astype(int)
+    df['is_month_start'] = df[col].dt.is_month_start
+    df['is_month_end'] = df[col].dt.is_month_end
     return df
 
 
@@ -120,9 +125,8 @@ def cyclical_encode(df: pd.DataFrame, col: str, period: int) -> pd.DataFrame:
         cos = cos(2π × value / period)
     """
     df = df.copy()
-    # --- 코드를 작성하세요 ---
-
-    # -----------------------
+    df[f'{col}_sin'] = np.sin(2 * np.pi * df[col] / period)
+    df[f'{col}_cos'] = np.cos(2 * np.pi * df[col] / period)
     return df
 
 
@@ -170,9 +174,7 @@ def add_time_since(df: pd.DataFrame, col: str, reference: pd.Timestamp) -> pd.Da
     컬럼 이름: 'days_since'
     """
     df = df.copy()
-    # --- 코드를 작성하세요 ---
-
-    # -----------------------
+    df['days_since'] = (df[col] - reference).dt.days
     return df
 
 

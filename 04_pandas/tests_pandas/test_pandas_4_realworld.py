@@ -24,11 +24,8 @@ def test_pandas_1_time_delta_churn():
         ])
     })
     
-    # --- 코드를 작성하세요 ---
-    
-    # 임시 변수명을 사용하셔도 되고 바로 변형해도 됩니다.
-    
-    # -----------------------
+    df = df.sort_values(by=['user_id', 'payment_date'])
+    df['days_since_last'] = (df['payment_date'] - df.groupby('user_id')['payment_date'].shift(1)).dt.days
 
     # 검증을 위해 user_id=1 의 데이터만 시간순으로 가져옵니다.
     user1 = df[df['user_id'] == 1].sort_values('payment_date')
@@ -59,9 +56,8 @@ def test_pandas_2_anomaly_detection_rolling():
         # 이상치로 판별해봅시다.
     })
     
-    # --- 코드를 작성하세요 ---
-
-    # -----------------------
+    df['traffic_3m_avg'] = df['traffic'].rolling(window=3).mean()
+    df['is_warning'] = df['traffic'] > (df['traffic_3m_avg'] * 2)
 
     # 4번째 데이터 (인덱스 3) 검증 
     # rolling window 3 (indices 1,2,3 -> traffic: 110, 105, 500, mean = 715/3 = 238.33)
@@ -94,9 +90,9 @@ def test_pandas_3_complex_cohort_prep():
         ])
     })
     
-    # --- 코드를 작성하세요 ---
-    
-    # -----------------------
+    df['first_payment_date'] = df.groupby('user_id')['payment_date'].transform('min')
+    df['order_month'] = df['payment_date'].dt.to_period('M')
+    df['cohort_month'] = df['first_payment_date'].dt.to_period('M')
 
     # 코호트 기준 월 정상 할당 검증
     # User A의 cohort_month는 항상 '2024-01' (또는 Period객체) 여야 합니다.
@@ -108,4 +104,4 @@ def test_pandas_3_complex_cohort_prep():
     assert all('2024-02' in c for c in b_cohorts)
     
     # 주문 월 정상 추출 검증
-    assert df.loc[1, 'order_month'].astype(str) == '2024-03' 
+    assert str(df.loc[1, 'order_month']) == '2024-03' 

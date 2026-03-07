@@ -34,9 +34,11 @@ def extract_text_stats(df: pd.DataFrame, col: str = 'text') -> pd.DataFrame:
     - 'digit_count':   숫자 문자 수
     """
     df = df.copy()
-    # --- 코드를 작성하세요 ---
-
-    # -----------------------
+    df['text_length'] = df[col].str.len()
+    df['word_count'] = df[col].str.split().str.len()
+    df['unique_words'] = df[col].str.lower().str.split().apply(lambda x: len(set(x)) if isinstance(x, list) else 0)
+    df['avg_word_len'] = df['text_length'] / df['word_count']
+    df['digit_count'] = df[col].str.count(r'\d')
     return df
 
 
@@ -88,11 +90,8 @@ def apply_count_vectorizer(corpus: list, max_features: int = 20) -> tuple:
     - X_bow: 변환된 밀집 numpy array (toarray() 적용)
     - vectorizer: 학습된 CountVectorizer 객체
     """
-    X_bow = None
-    vectorizer = None
-    # --- 코드를 작성하세요 ---
-
-    # -----------------------
+    vectorizer = CountVectorizer(max_features=max_features)
+    X_bow = vectorizer.fit_transform(corpus).toarray()
     return X_bow, vectorizer
 
 
@@ -138,11 +137,8 @@ def apply_tfidf(corpus: list, max_features: int = 20) -> tuple:
     - X_tfidf: 변환된 밀집 numpy array (toarray() 적용)
     - vectorizer: 학습된 TfidfVectorizer 객체
     """
-    X_tfidf = None
-    vectorizer = None
-    # --- 코드를 작성하세요 ---
-
-    # -----------------------
+    vectorizer = TfidfVectorizer(max_features=max_features)
+    X_tfidf = vectorizer.fit_transform(corpus).toarray()
     return X_tfidf, vectorizer
 
 
@@ -189,11 +185,8 @@ def apply_ngram_tfidf(corpus: list, ngram_range: tuple = (1, 2), max_features: i
     TfidfVectorizer(ngram_range=ngram_range, max_features=max_features)를 적용하세요.
     반환값: (X_tfidf, vectorizer)
     """
-    X_tfidf = None
-    vectorizer = None
-    # --- 코드를 작성하세요 ---
-
-    # -----------------------
+    vectorizer = TfidfVectorizer(ngram_range=ngram_range, max_features=max_features)
+    X_tfidf = vectorizer.fit_transform(corpus).toarray()
     return X_tfidf, vectorizer
 
 

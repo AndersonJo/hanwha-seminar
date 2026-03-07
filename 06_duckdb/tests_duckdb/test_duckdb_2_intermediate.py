@@ -47,10 +47,12 @@ def test_intermediate_1_row_number(conn):
     결과를 `result`에 할당하세요.
     힌트: ROW_NUMBER() OVER (PARTITION BY species ORDER BY sepal_length DESC)
     """
-    result = None
-    # --- SQL을 작성하세요 ---
-
-    # -----------------------
+    sql = """
+    SELECT species, sepal_length,
+           ROW_NUMBER() OVER (PARTITION BY species ORDER BY sepal_length DESC) as row_num
+    FROM iris
+    """
+    result = conn.execute(sql).fetchdf()
 
     assert result is not None
     assert 'row_num' in result.columns
@@ -73,10 +75,12 @@ def test_intermediate_2_qualify_top_n(conn):
     결과를 `result`에 할당하세요.
     힌트: QUALIFY ROW_NUMBER() OVER (...) <= 3
     """
-    result = None
-    # --- SQL을 작성하세요 ---
-
-    # -----------------------
+    sql = """
+    SELECT *
+    FROM iris
+    QUALIFY ROW_NUMBER() OVER (PARTITION BY species ORDER BY sepal_length DESC) <= 3
+    """
+    result = conn.execute(sql).fetchdf()
 
     assert result is not None
     # 3개 species × 3개 = 9개 행
@@ -97,10 +101,15 @@ def test_intermediate_3_rank_vs_dense_rank(conn):
     컬럼: sepal_width, rank_val, dense_rank_val
     결과를 sepal_width 오름차순으로 정렬하여 `result`에 할당하세요.
     """
-    result = None
-    # --- SQL을 작성하세요 ---
-
-    # -----------------------
+    sql = """
+    SELECT sepal_width,
+           RANK() OVER (ORDER BY sepal_width ASC) as rank_val,
+           DENSE_RANK() OVER (ORDER BY sepal_width ASC) as dense_rank_val
+    FROM iris
+    WHERE species = 'setosa'
+    ORDER BY sepal_width ASC
+    """
+    result = conn.execute(sql).fetchdf()
 
     assert result is not None
     assert 'rank_val' in result.columns
@@ -125,10 +134,16 @@ def test_intermediate_4_lag_lead(conn):
     - diff_from_prev: 현재 sepal_length - 이전 sepal_length
     를 계산하세요. 결과를 `result`에 할당하세요.
     """
-    result = None
-    # --- SQL을 작성하세요 ---
-
-    # -----------------------
+    sql = """
+    SELECT *,
+           LAG(sepal_length) OVER (ORDER BY sepal_length ASC) as prev_sepal,
+           LEAD(sepal_length) OVER (ORDER BY sepal_length ASC) as next_sepal,
+           sepal_length - LAG(sepal_length) OVER (ORDER BY sepal_length ASC) as diff_from_prev
+    FROM iris
+    WHERE species = 'versicolor'
+    ORDER BY sepal_length ASC
+    """
+    result = conn.execute(sql).fetchdf()
 
     assert result is not None
     assert 'prev_sepal' in result.columns
@@ -150,10 +165,13 @@ def test_intermediate_5_cumulative_sum(conn):
     결과를 `result`에 할당하세요.
     힌트: SUM(...) OVER (ORDER BY sepal_length ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
     """
-    result = None
-    # --- SQL을 작성하세요 ---
-
-    # -----------------------
+    sql = """
+    SELECT *,
+           SUM(sepal_length) OVER (ORDER BY sepal_length ASC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) as cumulative_sum
+    FROM iris
+    ORDER BY sepal_length ASC
+    """
+    result = conn.execute(sql).fetchdf()
 
     assert result is not None
     assert 'cumulative_sum' in result.columns
@@ -175,10 +193,18 @@ def test_intermediate_6_cte(conn):
                        개별값 - 평균 = deviation 컬럼을 추가하세요.
     결과를 `result`에 할당하세요.
     """
-    result = None
-    # --- SQL을 작성하세요 ---
-
-    # -----------------------
+    sql = """
+    WITH avg_cte AS (
+        SELECT species, AVG(sepal_length) as avg_sepal_length
+        FROM iris
+        GROUP BY species
+    )
+    SELECT i.*, a.avg_sepal_length,
+           (i.sepal_length - a.avg_sepal_length) as deviation
+    FROM iris i
+    JOIN avg_cte a ON i.species = a.species
+    """
+    result = conn.execute(sql).fetchdf()
 
     assert result is not None
     assert 'deviation' in result.columns
@@ -200,10 +226,13 @@ def test_intermediate_7_rolling_window(conn):
     결과를 `result`에 할당하세요.
     힌트: AVG(...) OVER (ORDER BY sepal_length ROWS BETWEEN 2 PRECEDING AND CURRENT ROW)
     """
-    result = None
-    # --- SQL을 작성하세요 ---
-
-    # -----------------------
+    sql = """
+    SELECT *,
+           AVG(sepal_length) OVER (ORDER BY sepal_length ASC ROWS BETWEEN 2 PRECEDING AND CURRENT ROW) as rolling_avg_3
+    FROM iris
+    ORDER BY sepal_length ASC
+    """
+    result = conn.execute(sql).fetchdf()
 
     assert result is not None
     assert 'rolling_avg_3' in result.columns
@@ -226,10 +255,8 @@ def test_intermediate_8_parquet_roundtrip(conn, tmp_path):
     """
     parquet_path = str(tmp_path / 'iris.parquet')
 
-    result = None
-    # --- 코드를 작성하세요 ---
-
-    # -----------------------
+    conn.execute(f"COPY (SELECT * FROM iris) TO '{parquet_path}' (FORMAT PARQUET)")
+    result = conn.execute(f"SELECT * FROM read_parquet('{parquet_path}')").df()
 
     assert result is not None
     assert len(result) == 150

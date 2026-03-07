@@ -28,11 +28,8 @@ def apply_polynomial_features(X: np.ndarray, degree: int = 2) -> tuple:
     - X_poly: 변환된 numpy array
     - poly: 학습된 PolynomialFeatures 객체
     """
-    X_poly = None
-    poly = None
-    # --- 코드를 작성하세요 ---
-
-    # -----------------------
+    poly = PolynomialFeatures(degree=degree, include_bias=True)
+    X_poly = poly.fit_transform(X)
     return X_poly, poly
 
 
@@ -82,11 +79,8 @@ def apply_interaction_only(X: np.ndarray) -> tuple:
     자체 제곱항(x0^2, x1^2)은 제외하고 교차항(x0*x1)만 생성합니다.
     반환값: (X_inter, poly)
     """
-    X_inter = None
-    poly = None
-    # --- 코드를 작성하세요 ---
-
-    # -----------------------
+    poly = PolynomialFeatures(degree=2, interaction_only=True, include_bias=False)
+    X_inter = poly.fit_transform(X)
     return X_inter, poly
 
 
@@ -117,9 +111,8 @@ def apply_log_transform(df: pd.DataFrame, columns: list) -> pd.DataFrame:
     힌트: np.log1p()
     """
     df = df.copy()
-    # --- 코드를 작성하세요 ---
-
-    # -----------------------
+    for col in columns:
+        df[f'log_{col}'] = np.log1p(df[col])
     return df
 
 
@@ -155,9 +148,9 @@ def apply_power_transforms(df: pd.DataFrame, col: str) -> pd.DataFrame:
     반환값: 새 열이 추가된 DataFrame (원본 열 유지)
     """
     df = df.copy()
-    # --- 코드를 작성하세요 ---
-
-    # -----------------------
+    df[f'{col}_sq'] = df[col] ** 2
+    df[f'{col}_sqrt'] = np.sqrt(df[col])
+    df[f'{col}_inv'] = 1 / (df[col] + 1e-8)
     return df
 
 
@@ -196,9 +189,7 @@ def create_ratio_feature(df: pd.DataFrame, numerator: str, denominator: str, new
     반환값: 새 열이 추가된 DataFrame
     """
     df = df.copy()
-    # --- 코드를 작성하세요 ---
-
-    # -----------------------
+    df[new_col] = df[numerator] / (df[denominator] + 1e-8)
     return df
 
 

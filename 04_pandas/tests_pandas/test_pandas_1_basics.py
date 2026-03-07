@@ -6,10 +6,11 @@ def test_pandas_1_load_and_inspect():
     문제 1: datasets 라이브러리를 사용하여 'titanic' 데이터셋을 불러오세요.
     훈련(train) 셋을 가져와 Pandas DataFrame으로 변환(to_pandas)하여 `df` 변수에 할당하세요.
     """
-    df = None
-    # --- 코드를 작성하세요 ---
-    
-    # -----------------------
+    try:
+        dataset = load_dataset('titanic')
+        df = dataset['train'].to_pandas()
+    except:
+        df = pd.read_csv("https://raw.githubusercontent.com/datasciencedojo/datasets/master/titanic.csv")
 
     assert isinstance(df, pd.DataFrame), "데이터 타입이 DataFrame이 아닙니다."
     assert "Survived" in df.columns, "Titanic 데이터셋이 정상적으로 로드되지 않았습니다."
@@ -28,10 +29,7 @@ def test_pandas_2_extract_columns():
     }
     df = pd.DataFrame(data)
     
-    subset_df = None
-    # --- 코드를 작성하세요 ---
-    
-    # -----------------------
+    subset_df = df[['Name', 'Age']]
 
     assert list(subset_df.columns) == ['Name', 'Age']
     assert len(subset_df) == 3
@@ -49,10 +47,7 @@ def test_pandas_3_boolean_indexing():
     }
     df = pd.DataFrame(data)
     
-    filtered_df = None
-    # --- 코드를 작성하세요 ---
-    
-    # -----------------------
+    filtered_df = df.loc[(df['Age'] >= 30) & (df['City'] != 'Seoul')]
 
     assert len(filtered_df) == 2
     assert list(filtered_df['Name'].values) == ['Bob', 'Dave']
@@ -71,10 +66,7 @@ def test_pandas_4_iloc_usage():
     }
     df = pd.DataFrame(data)
     
-    iloc_df = None
-    # --- 코드를 작성하세요 ---
-    
-    # -----------------------
+    iloc_df = df.iloc[1:, [0, 2]]
 
     assert iloc_df.shape == (3, 2)
     assert list(iloc_df.columns) == ['A', 'C']

@@ -19,8 +19,8 @@ def apply_random_undersampling(X: np.ndarray, y: np.ndarray, random_state: int =
     - 반드시 random_state 값을 Sampler 초기화 파라미터로 넘겨주어 재현성을 확보해야 합니다.
     - fit_resample 메서드를 활용하세요.
     """
-    # 이 부분을 직접 구현하세요.
-    pass
+    sampler = RandomUnderSampler(random_state=random_state)
+    return sampler.fit_resample(X, y)
 
 def apply_smote(X: np.ndarray, y: np.ndarray, random_state: int = 42) -> tuple:
     """
@@ -28,8 +28,8 @@ def apply_smote(X: np.ndarray, y: np.ndarray, random_state: int = 42) -> tuple:
     오버샘플링(생성) 처리된 (X_resampled, y_resampled) 튜플을 반환하세요.
     - 반드시 random_state 값을 초기화 시 넘겨야 합니다.
     """
-    # 이 부분을 직접 구현하세요.
-    pass
+    smote = SMOTE(random_state=random_state)
+    return smote.fit_resample(X, y)
 
 
 # ---------- Pytest 검증 영역 ----------

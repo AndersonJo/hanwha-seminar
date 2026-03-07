@@ -32,11 +32,9 @@ def remove_low_variance(X: pd.DataFrame, threshold: float = 0.01) -> tuple:
     - X_selected: 선택된 피처만 남긴 numpy array
     - selector: 학습된 VarianceThreshold 객체
     """
-    X_selected = None
-    selector = None
-    # --- 코드를 작성하세요 ---
-
-    # -----------------------
+    from sklearn.feature_selection import VarianceThreshold
+    selector = VarianceThreshold(threshold=threshold)
+    X_selected = selector.fit_transform(X)
     return X_selected, selector
 
 
@@ -61,11 +59,9 @@ def select_k_best_f(X, y, k: int = 5) -> tuple:
     - X_selected: 선택된 피처 numpy array
     - selector: 학습된 SelectKBest 객체
     """
-    X_selected = None
-    selector = None
-    # --- 코드를 작성하세요 ---
-
-    # -----------------------
+    from sklearn.feature_selection import SelectKBest, f_classif
+    selector = SelectKBest(score_func=f_classif, k=k)
+    X_selected = selector.fit_transform(X, y)
     return X_selected, selector
 
 
@@ -104,11 +100,10 @@ def select_k_best_mi(X, y, k: int = 5) -> tuple:
     random_state=42를 사용하세요.
     반환값: (X_selected, selector)
     """
-    X_selected = None
-    selector = None
-    # --- 코드를 작성하세요 ---
-    # 힌트: from sklearn.feature_selection import SelectKBest, mutual_info_classif
-    # -----------------------
+    from sklearn.feature_selection import SelectKBest, mutual_info_classif
+    def mi_func(X, y): return mutual_info_classif(X, y, random_state=42)
+    selector = SelectKBest(score_func=mi_func, k=k)
+    X_selected = selector.fit_transform(X, y)
     return X_selected, selector
 
 
@@ -132,11 +127,13 @@ def apply_rfe(X, y, n_features: int = 5) -> tuple:
     - selected_mask: 선택된 피처의 boolean array (True = 선택됨)
     - ranking: 각 피처의 순위 array (1 = 가장 중요)
     """
-    selected_mask = None
-    ranking = None
-    # --- 코드를 작성하세요 ---
-
-    # -----------------------
+    from sklearn.feature_selection import RFE
+    from sklearn.linear_model import LogisticRegression
+    estimator = LogisticRegression(max_iter=1000, random_state=42)
+    selector = RFE(estimator, n_features_to_select=n_features)
+    selector.fit(X, y)
+    selected_mask = selector.support_
+    ranking = selector.ranking_
     return selected_mask, ranking
 
 
@@ -170,10 +167,10 @@ def get_tree_importance(X: pd.DataFrame, y) -> pd.Series:
     인덱스: 피처 이름, 값: 중요도
     내림차순으로 정렬하세요.
     """
-    importance_series = None
-    # --- 코드를 작성하세요 ---
-
-    # -----------------------
+    from sklearn.ensemble import RandomForestClassifier
+    model = RandomForestClassifier(n_estimators=100, random_state=42)
+    model.fit(X, y)
+    importance_series = pd.Series(model.feature_importances_, index=X.columns).sort_values(ascending=False)
     return importance_series
 
 
@@ -211,11 +208,11 @@ def apply_pca(X: np.ndarray, n_components) -> tuple:
     - X_pca: 변환된 numpy array
     - pca: 학습된 PCA 객체
     """
-    X_pca = None
-    pca = None
-    # --- 코드를 작성하세요 ---
-
-    # -----------------------
+    from sklearn.decomposition import PCA
+    from sklearn.preprocessing import StandardScaler
+    X_scaled = StandardScaler().fit_transform(X)
+    pca = PCA(n_components=n_components)
+    X_pca = pca.fit_transform(X_scaled)
     return X_pca, pca
 
 

@@ -10,8 +10,8 @@ from abc import ABC, abstractmethod
 
 class BankAccount:
     def __init__(self, owner: str, balance: float = 0.0):
-        # TODO: owner와 balance를 인스턴스 속성으로 저장하세요.
-        pass
+        self.owner = owner
+        self.balance = balance
 
     def deposit(self, amount: float) -> float:
         """
@@ -19,7 +19,10 @@ class BankAccount:
         잔액을 업데이트하고 새로운 잔액을 반환하세요.
         amount가 0 이하이면 ValueError를 발생시키세요.
         """
-        pass
+        if amount <= 0:
+            raise ValueError()
+        self.balance += amount
+        return self.balance
 
     def withdraw(self, amount: float) -> float:
         """
@@ -28,13 +31,18 @@ class BankAccount:
         잔액이 부족하면 ValueError를 발생시키세요.
         amount가 0 이하이면 ValueError를 발생시키세요.
         """
-        pass
+        if amount <= 0:
+            raise ValueError()
+        if amount > self.balance:
+            raise ValueError()
+        self.balance -= amount
+        return self.balance
 
     def __str__(self) -> str:
         """
         "BankAccount(owner=Alice, balance=100.0)" 형식의 문자열을 반환하세요.
         """
-        pass
+        return f"BankAccount(owner={self.owner}, balance={self.balance})"
 
 
 def test_bank_account_initial_state():
@@ -84,33 +92,27 @@ def test_bank_account_str():
 
 class Animal:
     def __init__(self, name: str):
-        # TODO: name을 인스턴스 속성으로 저장하세요.
-        pass
+        self.name = name
 
     def speak(self) -> str:
-        # TODO: NotImplementedError를 발생시키세요.
-        pass
+        raise NotImplementedError()
 
     def __repr__(self) -> str:
-        # TODO: "Dog(name=Rex)" 또는 "Cat(name=Luna)" 형식으로 반환하세요.
-        # 힌트: type(self).__name__ 으로 클래스 이름을 얻을 수 있습니다.
-        pass
+        return f"{type(self).__name__}(name={self.name})"
 
 
 class Dog(Animal):
     def speak(self) -> str:
-        # TODO: "Woof!" 를 반환하세요.
-        pass
+        return "Woof!"
 
 
 class Cat(Animal):
     def __init__(self, name: str, indoor: bool = True):
-        # TODO: super().__init__() 호출 후 indoor 속성을 저장하세요.
-        pass
+        super().__init__(name)
+        self.indoor = indoor
 
     def speak(self) -> str:
-        # TODO: "Meow!" 를 반환하세요.
-        pass
+        return "Meow!"
 
 
 def test_dog_basic():
@@ -177,30 +179,25 @@ class Shape(ABC):
 
 class Rectangle(Shape):
     def __init__(self, width: float, height: float):
-        # TODO: width와 height를 저장하세요.
-        pass
+        self.width = width
+        self.height = height
 
     def area(self) -> float:
-        # TODO: 가로 × 세로
-        pass
+        return self.width * self.height
 
     def perimeter(self) -> float:
-        # TODO: 2 × (가로 + 세로)
-        pass
+        return 2 * (self.width + self.height)
 
 
 class Circle(Shape):
     def __init__(self, radius: float):
-        # TODO: radius를 저장하세요.
-        pass
+        self.radius = radius
 
     def area(self) -> float:
-        # TODO: π × r²
-        pass
+        return math.pi * (self.radius ** 2)
 
     def perimeter(self) -> float:
-        # TODO: 2 × π × r
-        pass
+        return 2 * math.pi * self.radius
 
 
 def test_rectangle_area():
@@ -243,25 +240,21 @@ class Temperature:
     ABSOLUTE_ZERO = -273.15
 
     def __init__(self, celsius: float):
-        # TODO: self.celsius = celsius 로 setter를 통해 값을 설정하세요.
-        pass
+        self.celsius = celsius
 
     @property
     def celsius(self) -> float:
-        # TODO: 내부에 저장된 celsius 값을 반환하세요.
-        pass
+        return self._celsius
 
     @celsius.setter
     def celsius(self, value: float):
-        # TODO: value가 ABSOLUTE_ZERO 미만이면 ValueError를 발생시키세요.
-        # 정상이면 내부 변수에 저장하세요.
-        pass
+        if value < self.ABSOLUTE_ZERO:
+            raise ValueError()
+        self._celsius = value
 
     @property
     def fahrenheit(self) -> float:
-        # TODO: 섭씨를 화씨로 변환하여 반환하세요.
-        # 공식: F = C × 9/5 + 32
-        pass
+        return self.celsius * 9 / 5 + 32
 
 
 def test_temperature_celsius_init():
@@ -309,29 +302,25 @@ def test_temperature_boundary():
 
 class Vector:
     def __init__(self, x: float, y: float):
-        # TODO: x와 y를 저장하세요.
-        pass
+        self.x = x
+        self.y = y
 
     def __add__(self, other: 'Vector') -> 'Vector':
-        # TODO: 두 벡터의 성분별 덧셈 결과를 새 Vector로 반환하세요.
-        pass
+        return Vector(self.x + other.x, self.y + other.y)
 
     def __mul__(self, scalar: float) -> 'Vector':
-        # TODO: 벡터의 각 성분에 scalar를 곱한 새 Vector를 반환하세요.
-        pass
+        return Vector(self.x * scalar, self.y * scalar)
 
     def __eq__(self, other: object) -> bool:
-        # TODO: other가 Vector이고 x, y가 모두 같으면 True를 반환하세요.
-        pass
+        if not isinstance(other, Vector):
+            return False
+        return self.x == other.x and self.y == other.y
 
     def __abs__(self) -> float:
-        # TODO: 벡터의 크기(유클리드 거리)를 반환하세요.
-        # 공식: sqrt(x² + y²)
-        pass
+        return math.sqrt(self.x ** 2 + self.y ** 2)
 
     def __repr__(self) -> str:
-        # TODO: "Vector(x=1, y=2)" 형식으로 반환하세요.
-        pass
+        return f"Vector(x={self.x}, y={self.y})"
 
 
 def test_vector_add():

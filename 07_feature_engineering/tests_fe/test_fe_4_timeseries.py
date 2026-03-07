@@ -36,9 +36,8 @@ def add_lag_features(df: pd.DataFrame, col: str, lags: list) -> pd.DataFrame:
     힌트: df[col].shift(n)
     """
     df = df.copy()
-    # --- 코드를 작성하세요 ---
-
-    # -----------------------
+    for lag in lags:
+        df[f'lag_{lag}'] = df[col].shift(lag)
     return df
 
 
@@ -78,9 +77,10 @@ def add_rolling_features(df: pd.DataFrame, col: str, window: int) -> pd.DataFram
     min_periods=1 을 사용하여 초반 NaN을 최소화하세요.
     """
     df = df.copy()
-    # --- 코드를 작성하세요 ---
-
-    # -----------------------
+    df[f'rolling_mean_{window}'] = df[col].rolling(window=window, min_periods=1).mean()
+    df[f'rolling_std_{window}'] = df[col].rolling(window=window, min_periods=1).std()
+    df[f'rolling_max_{window}'] = df[col].rolling(window=window, min_periods=1).max()
+    df[f'rolling_min_{window}'] = df[col].rolling(window=window, min_periods=1).min()
     return df
 
 
@@ -124,9 +124,9 @@ def add_diff_features(df: pd.DataFrame, col: str) -> pd.DataFrame:
     힌트: df[col].diff(n), df[col].pct_change(n)
     """
     df = df.copy()
-    # --- 코드를 작성하세요 ---
-
-    # -----------------------
+    df['diff_1'] = df[col].diff(1)
+    df['diff_7'] = df[col].diff(7)
+    df['pct_change_1'] = df[col].pct_change(1) * 100
     return df
 
 
@@ -169,9 +169,7 @@ def add_ewm_features(df: pd.DataFrame, col: str, span: int) -> pd.DataFrame:
     힌트: df[col].ewm(span=span, adjust=False).mean()
     """
     df = df.copy()
-    # --- 코드를 작성하세요 ---
-
-    # -----------------------
+    df[f'ewm_mean_{span}'] = df[col].ewm(span=span, adjust=False).mean()
     return df
 
 
@@ -204,9 +202,7 @@ def add_group_lag(df: pd.DataFrame, group_col: str, value_col: str, lag: int) ->
     힌트: df.groupby(group_col)[value_col].shift(lag)
     """
     df = df.copy()
-    # --- 코드를 작성하세요 ---
-
-    # -----------------------
+    df[f'lag_{lag}'] = df.groupby(group_col)[value_col].shift(lag)
     return df
 
 

@@ -36,10 +36,9 @@ def impute_with_mean(X: np.ndarray) -> np.ndarray:
     SimpleImputer(strategy='mean')을 사용하여 결측치를 열별 평균으로 채우세요.
     반환값: 결측치가 없는 numpy array
     """
-    result = None
-    # --- 코드를 작성하세요 ---
-
-    # -----------------------
+    from sklearn.impute import SimpleImputer
+    imputer = SimpleImputer(strategy='mean')
+    result = imputer.fit_transform(X)
     return result
 
 
@@ -74,10 +73,9 @@ def impute_with_median(X: np.ndarray) -> np.ndarray:
     SimpleImputer(strategy='median')을 사용하여 결측치를 열별 중앙값으로 채우세요.
     반환값: 결측치가 없는 numpy array
     """
-    result = None
-    # --- 코드를 작성하세요 ---
-
-    # -----------------------
+    from sklearn.impute import SimpleImputer
+    imputer = SimpleImputer(strategy='median')
+    result = imputer.fit_transform(X)
     return result
 
 
@@ -106,10 +104,9 @@ def impute_with_knn(X: np.ndarray, n_neighbors: int = 5) -> np.ndarray:
     KNNImputer(n_neighbors=n_neighbors)를 사용하여 결측치를 채우세요.
     반환값: 결측치가 없는 numpy array
     """
-    result = None
-    # --- 코드를 작성하세요 ---
-
-    # -----------------------
+    from sklearn.impute import KNNImputer
+    imputer = KNNImputer(n_neighbors=n_neighbors)
+    result = imputer.fit_transform(X)
     return result
 
 
@@ -142,10 +139,10 @@ def impute_with_iterative(X: np.ndarray) -> np.ndarray:
           from sklearn.impute import IterativeImputer
     반환값: 결측치가 없는 numpy array
     """
-    result = None
-    # --- 코드를 작성하세요 ---
-
-    # -----------------------
+    from sklearn.experimental import enable_iterative_imputer
+    from sklearn.impute import IterativeImputer
+    imputer = IterativeImputer(max_iter=10, random_state=42)
+    result = imputer.fit_transform(X)
     return result
 
 
@@ -170,10 +167,9 @@ def add_missing_indicator(X: np.ndarray) -> np.ndarray:
     features='missing-only' 옵션을 사용하세요.
     반환값: 결측치가 있는 열에 대한 True/False numpy array
     """
-    result = None
-    # --- 코드를 작성하세요 ---
-
-    # -----------------------
+    from sklearn.impute import MissingIndicator
+    indicator = MissingIndicator(features='missing-only')
+    result = indicator.fit_transform(X)
     return result
 
 
@@ -210,10 +206,7 @@ def missing_ratio(X: np.ndarray) -> np.ndarray:
     각 열(피처)의 결측치 비율(0.0~1.0)을 numpy array로 반환하세요.
     힌트: np.isnan(X).mean(axis=0)
     """
-    result = None
-    # --- 코드를 작성하세요 ---
-
-    # -----------------------
+    result = np.isnan(X).mean(axis=0)
     return result
 
 

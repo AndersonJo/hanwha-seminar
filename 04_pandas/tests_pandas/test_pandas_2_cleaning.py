@@ -12,10 +12,8 @@ def test_pandas_1_handling_nans():
         'Score': [80.0, np.nan, 90.0, np.nan] # 평균은 85.0
     })
     
-    df_filled = None
-    # --- 코드를 작성하세요 ---
-    
-    # -----------------------
+    df_filled = df.copy()
+    df_filled['Score'] = df_filled['Score'].fillna(df_filled['Score'].mean())
 
     assert df_filled['Score'].isna().sum() == 0, "여전히 NaN 값이 존재합니다."
     assert list(df_filled['Score']) == [80.0, 85.0, 90.0, 85.0]
@@ -32,10 +30,8 @@ def test_pandas_2_data_type_conversion():
         'Price': ['1500', '2000', '3000']
     })
     
-    df_converted = None
-    # --- 코드를 작성하세요 ---
-    
-    # -----------------------
+    df_converted = df.copy()
+    df_converted['Price'] = df_converted['Price'].astype(int)
 
     assert df_converted['Price'].dtype in (np.int32, np.int64)
     assert df_converted['Price'].sum() == 6500
@@ -53,10 +49,8 @@ def test_pandas_3_string_cleaning():
         'City': ['  Seoul  ', 'busan', 'NEW YORK ']
     })
     
-    df_cleaned = None
-    # --- 코드를 작성하세요 ---
-    
-    # -----------------------
+    df_cleaned = df.copy()
+    df_cleaned['City'] = df_cleaned['City'].str.lower().str.replace(' ', '')
 
     expected_cities = ['seoul', 'busan', 'newyork']
     assert list(df_cleaned['City']) == expected_cities
@@ -74,10 +68,7 @@ def test_pandas_4_drop_duplicates():
         'Email': ['a@a.com', 'b@b.com', 'c@c.com', 'b@b.com']
     })
     
-    df_unique = None
-    # --- 코드를 작성하세요 ---
-    
-    # -----------------------
+    df_unique = df.drop_duplicates(subset=['Email'], keep='last')
 
     assert len(df_unique) == 3
     # 인덱스 초기화를 진행하지 않았다면 3번 인덱스가 남아야함
