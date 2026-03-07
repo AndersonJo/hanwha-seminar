@@ -28,11 +28,8 @@ def apply_standard_scaler(X: np.ndarray) -> tuple:
     - X_scaled: 변환된 numpy array
     - scaler: 학습된 StandardScaler 객체
     """
-    X_scaled = None
-    scaler = None
-    # --- 코드를 작성하세요 ---
-
-    # -----------------------
+    scaler = StandardScaler()
+    X_scaled = scaler.fit_transform(X)
     return X_scaled, scaler
 
 
@@ -72,11 +69,8 @@ def apply_minmax_scaler(X: np.ndarray) -> tuple:
     MinMaxScaler를 적용하세요. feature_range는 기본값 (0, 1)을 사용하세요.
     반환값: (X_scaled, scaler)
     """
-    X_scaled = None
-    scaler = None
-    # --- 코드를 작성하세요 ---
-
-    # -----------------------
+    scaler = MinMaxScaler()
+    X_scaled = scaler.fit_transform(X)
     return X_scaled, scaler
 
 
@@ -108,11 +102,8 @@ def apply_robust_scaler(X: np.ndarray) -> tuple:
     RobustScaler를 적용하세요.
     반환값: (X_scaled, scaler)
     """
-    X_scaled = None
-    scaler = None
-    # --- 코드를 작성하세요 ---
-
-    # -----------------------
+    scaler = RobustScaler()
+    X_scaled = scaler.fit_transform(X)
     return X_scaled, scaler
 
 
@@ -147,10 +138,8 @@ def apply_normalizer(X: np.ndarray, norm: str = 'l2') -> np.ndarray:
     Normalizer를 적용하세요.
     반환값: X_normalized (각 행의 L2 노름이 1인 numpy array)
     """
-    X_normalized = None
-    # --- 코드를 작성하세요 ---
-
-    # -----------------------
+    scaler = Normalizer(norm=norm)
+    X_normalized = scaler.fit_transform(X)
     return X_normalized
 
 
@@ -185,12 +174,9 @@ def scale_train_test(X_train: np.ndarray, X_test: np.ndarray) -> tuple:
     - X_test에는 transform()만 적용
     반환값: (X_train_scaled, X_test_scaled, scaler)
     """
-    X_train_scaled = None
-    X_test_scaled  = None
-    scaler = None
-    # --- 코드를 작성하세요 ---
-
-    # -----------------------
+    scaler = StandardScaler()
+    X_train_scaled = scaler.fit_transform(X_train)
+    X_test_scaled = scaler.transform(X_test)
     return X_train_scaled, X_test_scaled, scaler
 
 

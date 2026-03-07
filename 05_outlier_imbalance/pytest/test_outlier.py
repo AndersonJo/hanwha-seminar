@@ -19,8 +19,12 @@ def detect_iqr_outliers(df: pd.DataFrame, column: str) -> pd.DataFrame:
     - IQR: Q3 - Q1
     - 이상치 기준: Q1 - (1.5 * IQR) 미만 이거나, Q3 + (1.5 * IQR) 초과
     """
-    # 이 부분을 직접 구현하세요.
-    pass
+    q1 = df[column].quantile(0.25)
+    q3 = df[column].quantile(0.75)
+    iqr = q3 - q1
+    lower = q1 - 1.5 * iqr
+    upper = q3 + 1.5 * iqr
+    return df[(df[column] < lower) | (df[column] > upper)]
 
 def cap_outliers(df: pd.DataFrame, column: str) -> pd.DataFrame:
     """
@@ -29,11 +33,14 @@ def cap_outliers(df: pd.DataFrame, column: str) -> pd.DataFrame:
     데이터프레임의 기존 열(컬럼) 값을 덮어씌운 후 반환하세요.
     - np.clip() 내장 함수를 사용할 것을 매우 권장합니다.
     """
-    # 기존 데이터프레임을 변형시키는 것을 막기 위해 명시적으로 copy를 사용합니다.
-    # df_copy = df.copy() (필요 시 활용)
-    
-    # 이 부분을 직접 구현하세요.
-    pass
+    df_copy = df.copy()
+    q1 = df_copy[column].quantile(0.25)
+    q3 = df_copy[column].quantile(0.75)
+    iqr = q3 - q1
+    lower_bound = q1 - 1.5 * iqr
+    upper_bound = q3 + 1.5 * iqr
+    df_copy[column] = np.clip(df_copy[column], lower_bound, upper_bound)
+    return df_copy
 
 
 # ---------- Pytest 검증 영역 ----------

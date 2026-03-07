@@ -11,10 +11,7 @@ def test_pandas_1_simple_groupby():
         'Sales': [100, 500, 150, 50, 600]
     })
     
-    category_sales = None
-    # --- 코드를 작성하세요 ---
-    
-    # -----------------------
+    category_sales = df.groupby('Category')['Sales'].sum()
 
     assert category_sales['Fashion'] == 250
     assert category_sales['Electronics'] == 1100
@@ -32,10 +29,7 @@ def test_pandas_2_multiple_aggregation():
         'Sales': [100, 500, 150, 50, 600]
     })
     
-    agg_df = None
-    # --- 코드를 작성하세요 ---
-    
-    # -----------------------
+    agg_df = df.groupby('Category')['Sales'].agg(['max', 'count']).reset_index()
 
     # agg_df는 최소한 Category 열 1개, Sales 열에 대해 max, count 2개 등 총 3개의 열이 있어야 합니다
     # 컬럼 이름을 플랫화하지 않았다면 튜플 구조일 수 있으나 검증에서는 값만 확인합니다
@@ -63,10 +57,7 @@ def test_pandas_3_merge_dataframes():
         'amount': [5000, 7000]
     })
     
-    df_merged = None
-    # --- 코드를 작성하세요 ---
-    
-    # -----------------------
+    df_merged = pd.merge(df_users, df_orders, left_on='id', right_on='user_id', how='left')
 
     assert len(df_merged) == 3, "Left Join이므로 3개 행이 유지되어야 합니다."
     # 2번 유저 Paul의 amount 누락값(NaN) 체크
@@ -87,10 +78,7 @@ def test_pandas_4_pivot_table():
         'Refund': [100, 200, 150, 300, 120, 250]
     })
     
-    pivot_df = None
-    # --- 코드를 작성하세요 ---
-    
-    # -----------------------
+    pivot_df = df.pivot_table(index='Month', columns='Category', values='Refund', aggfunc='mean')
 
     # Jan, Category A의 평균 환불은 (100+120)/2 = 110
     assert pivot_df.loc['Jan', 'A'] == 110

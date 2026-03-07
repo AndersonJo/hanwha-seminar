@@ -24,14 +24,14 @@ class UserRepository:
         """
         user_id를 키로 data 딕셔너리를 저장하세요.
         """
-        pass
+        self._store[user_id] = data
 
     def find(self, user_id: str) -> dict:
         """
         user_id로 저장된 data를 반환하세요.
         없으면 None을 반환하세요.
         """
-        pass
+        return self._store.get(user_id)
 
 
 class EmailService:
@@ -44,7 +44,7 @@ class EmailService:
         """
         email을 self._sent 리스트에 추가하세요.
         """
-        pass
+        self._sent.append(email)
 
 
 class Logger:
@@ -57,7 +57,7 @@ class Logger:
         """
         message를 self._logs 리스트에 추가하세요.
         """
-        pass
+        self._logs.append(message)
 
 
 def test_srp_user_repository_save_and_find():
@@ -112,30 +112,26 @@ class DiscountStrategy(ABC):
 
 class RegularDiscount(DiscountStrategy):
     def calculate(self, amount: float) -> float:
-        # TODO: 5% 할인 금액을 반환하세요. (amount의 5%)
-        pass
+        return amount * 0.05
 
 
 class PremiumDiscount(DiscountStrategy):
     def calculate(self, amount: float) -> float:
-        # TODO: 10% 할인 금액을 반환하세요.
-        pass
+        return amount * 0.10
 
 
 class VIPDiscount(DiscountStrategy):
     def calculate(self, amount: float) -> float:
-        # TODO: 20% 할인 금액을 반환하세요.
-        pass
+        return amount * 0.20
 
 
 class Order:
     def __init__(self, amount: float, discount_strategy: DiscountStrategy):
-        # TODO: amount와 discount_strategy를 저장하세요.
-        pass
+        self.amount = amount
+        self.discount_strategy = discount_strategy
 
     def final_price(self) -> float:
-        # TODO: amount - 할인금액 을 반환하세요.
-        pass
+        return self.amount - self.discount_strategy.calculate(self.amount)
 
 
 def test_ocp_regular_discount():
@@ -178,8 +174,7 @@ def test_ocp_extensible_without_modification():
 
 class Bird(ABC):
     def __init__(self, name: str):
-        # TODO: name을 저장하세요.
-        pass
+        self.name = name
 
     @abstractmethod
     def move(self) -> str:
@@ -188,14 +183,12 @@ class Bird(ABC):
 
 class FlyingBird(Bird):
     def move(self) -> str:
-        # TODO: f"{self.name} is flying" 을 반환하세요.
-        pass
+        return f"{self.name} is flying"
 
 
 class SwimmingBird(Bird):
     def move(self) -> str:
-        # TODO: f"{self.name} is swimming" 을 반환하세요.
-        pass
+        return f"{self.name} is swimming"
 
 
 class Eagle(FlyingBird):
@@ -271,30 +264,24 @@ class ISleepable(ABC):
 
 class HumanWorker(IWorkable, IEatable, ISleepable):
     def __init__(self, name: str):
-        # TODO: name을 저장하세요.
-        pass
+        self.name = name
 
     def work(self) -> str:
-        # TODO: f"{self.name} is working" 을 반환하세요.
-        pass
+        return f"{self.name} is working"
 
     def eat(self, food: str) -> str:
-        # TODO: f"{self.name} is eating {food}" 을 반환하세요.
-        pass
+        return f"{self.name} is eating {food}"
 
     def sleep(self, hours: int) -> str:
-        # TODO: f"{self.name} is sleeping for {hours} hours" 을 반환하세요.
-        pass
+        return f"{self.name} is sleeping for {hours} hours"
 
 
 class RobotWorker(IWorkable):
     def __init__(self, model: str):
-        # TODO: model을 저장하세요.
-        pass
+        self.model = model
 
     def work(self) -> str:
-        # TODO: f"Robot {self.model} is working" 을 반환하세요.
-        pass
+        return f"Robot {self.model} is working"
 
 
 def test_isp_human_all_behaviors():
@@ -346,8 +333,8 @@ class EmailSender(INotificationSender):
         self._sent = []
 
     def send(self, recipient: str, message: str) -> bool:
-        # TODO: (recipient, message) 튜플을 self._sent에 추가하고 True를 반환하세요.
-        pass
+        self._sent.append((recipient, message))
+        return True
 
 
 class SMSSender(INotificationSender):
@@ -355,18 +342,16 @@ class SMSSender(INotificationSender):
         self._sent = []
 
     def send(self, recipient: str, message: str) -> bool:
-        # TODO: (recipient, message) 튜플을 self._sent에 추가하고 True를 반환하세요.
-        pass
+        self._sent.append((recipient, message))
+        return True
 
 
 class NotificationService:
     def __init__(self, sender: INotificationSender):
-        # TODO: sender를 저장하세요. (추상화에만 의존합니다)
-        pass
+        self.sender = sender
 
     def notify(self, recipient: str, message: str) -> bool:
-        # TODO: sender의 send() 메서드에 위임하고 결과를 반환하세요.
-        pass
+        return self.sender.send(recipient, message)
 
 
 def test_dip_email_sender():

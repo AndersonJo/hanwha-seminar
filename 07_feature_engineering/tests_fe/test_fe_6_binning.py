@@ -27,10 +27,7 @@ def cut_into_bins(s: pd.Series, n_bins: int, labels: list) -> pd.Series:
     결측치가 생길 수 있으므로 include_lowest=True를 사용하세요.
     반환값: 카테고리형 Series
     """
-    result = None
-    # --- 코드를 작성하세요 ---
-
-    # -----------------------
+    result = pd.cut(s, bins=n_bins, labels=labels, include_lowest=True)
     return result
 
 
@@ -66,10 +63,7 @@ def cut_with_custom_bins(s: pd.Series) -> pd.Series:
     레이블: ['teen', 'young_adult', 'adult', 'senior']
     반환값: 카테고리형 Series
     """
-    result = None
-    # --- 코드를 작성하세요 ---
-
-    # -----------------------
+    result = pd.cut(s, bins=[0, 18, 35, 60, 100], labels=['teen', 'young_adult', 'adult', 'senior'])
     return result
 
 
@@ -94,10 +88,7 @@ def qcut_into_quantiles(s: pd.Series, q: int) -> pd.Series:
     duplicates='drop'을 사용하세요.
     반환값: 정수 레이블 Series (0, 1, ..., q-1)
     """
-    result = None
-    # --- 코드를 작성하세요 ---
-
-    # -----------------------
+    result = pd.qcut(s, q=q, labels=False, duplicates='drop')
     return result
 
 
@@ -132,10 +123,9 @@ def discretize_with_kbins(X: np.ndarray, n_bins: int, strategy: str) -> np.ndarr
     X를 구간화하세요.
     반환값: 정수 레이블로 구간화된 numpy array (shape 유지)
     """
-    result = None
-    # --- 코드를 작성하세요 ---
-
-    # -----------------------
+    from sklearn.preprocessing import KBinsDiscretizer
+    discretizer = KBinsDiscretizer(n_bins=n_bins, encode='ordinal', strategy=strategy)
+    result = discretizer.fit_transform(X)
     return result
 
 
@@ -172,10 +162,8 @@ def bin_and_onehot(s: pd.Series, n_bins: int) -> pd.DataFrame:
     2. pd.get_dummies()로 원-핫 인코딩하세요.
     반환값: 원-핫 인코딩된 DataFrame
     """
-    result = None
-    # --- 코드를 작성하세요 ---
-
-    # -----------------------
+    binned = pd.cut(s, bins=n_bins)
+    result = pd.get_dummies(binned, dtype=float)
     return result
 
 

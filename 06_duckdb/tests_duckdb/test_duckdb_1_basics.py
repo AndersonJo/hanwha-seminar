@@ -42,11 +42,8 @@ def test_basics_1_select_all_limit(conn):
     문제 1: iris 테이블에서 모든 컬럼을 조회하되, 상위 10개 행만 가져오세요.
     결과를 `result`에 할당하세요.
     """
-    result = None
-    # --- SQL을 작성하세요 ---
-    sql = ""  # 여기에 SQL 문자열을 작성하세요
-    # result = conn.execute(sql).fetchdf()
-    # -----------------------
+    sql = "SELECT * FROM iris LIMIT 10"
+    result = conn.execute(sql).fetchdf()
 
     assert result is not None, "result가 None입니다. SQL을 실행하세요."
     assert isinstance(result, pd.DataFrame)
@@ -63,10 +60,8 @@ def test_basics_2_select_columns(conn):
     문제 2: iris 테이블에서 sepal_length, petal_length, species 세 컬럼만 조회하세요.
     결과를 `result`에 할당하세요.
     """
-    result = None
-    # --- SQL을 작성하세요 ---
-
-    # -----------------------
+    sql = "SELECT sepal_length, petal_length, species FROM iris"
+    result = conn.execute(sql).fetchdf()
 
     assert result is not None
     assert list(result.columns) == ['sepal_length', 'petal_length', 'species']
@@ -82,10 +77,8 @@ def test_basics_3_where_filter(conn):
     문제 3: sepal_length가 6.0보다 크고 species가 'virginica'인 행만 조회하세요.
     결과를 `result`에 할당하세요.
     """
-    result = None
-    # --- SQL을 작성하세요 ---
-
-    # -----------------------
+    sql = "SELECT * FROM iris WHERE sepal_length > 6.0 AND species = 'virginica'"
+    result = conn.execute(sql).fetchdf()
 
     assert result is not None
     assert all(result['sepal_length'] > 6.0)
@@ -101,10 +94,8 @@ def test_basics_4_order_by(conn):
     문제 4: petal_length 기준으로 내림차순 정렬하고 상위 5개 행을 조회하세요.
     결과를 `result`에 할당하세요.
     """
-    result = None
-    # --- SQL을 작성하세요 ---
-
-    # -----------------------
+    sql = "SELECT * FROM iris ORDER BY petal_length DESC LIMIT 5"
+    result = conn.execute(sql).fetchdf()
 
     assert result is not None
     assert len(result) == 5
@@ -125,10 +116,15 @@ def test_basics_5_group_by_aggregation(conn):
     - max_petal_length: petal_length의 최댓값
     결과를 species 알파벳 오름차순으로 정렬하고 `result`에 할당하세요.
     """
-    result = None
-    # --- SQL을 작성하세요 ---
-
-    # -----------------------
+    sql = """
+    SELECT species, COUNT(*) as count,
+           ROUND(AVG(sepal_length), 4) as avg_sepal_length,
+           MAX(petal_length) as max_petal_length
+    FROM iris
+    GROUP BY species
+    ORDER BY species ASC
+    """
+    result = conn.execute(sql).fetchdf()
 
     assert result is not None
     assert len(result) == 3   # 3개 종
@@ -149,10 +145,13 @@ def test_basics_6_having(conn):
     평균이 3.0 이상인 species만 조회하세요.
     결과를 `result`에 할당하세요.
     """
-    result = None
-    # --- SQL을 작성하세요 ---
-
-    # -----------------------
+    sql = """
+    SELECT species, AVG(sepal_width) as avg_sepal_width
+    FROM iris
+    GROUP BY species
+    HAVING AVG(sepal_width) >= 3.0
+    """
+    result = conn.execute(sql).fetchdf()
 
     assert result is not None
     assert all(result['avg_sepal_width'] >= 3.0)
@@ -175,10 +174,12 @@ def test_basics_7_query_pandas_df_directly():
         'salary': [90000,   70000, 95000,     65000,  72000]
     })
 
-    result = None
-    # --- SQL을 작성하세요 ---
-
-    # -----------------------
+    sql = """
+    SELECT dept, AVG(salary) as avg_salary
+    FROM employee_df
+    GROUP BY dept
+    """
+    result = duckdb.query(sql).df()
 
     assert result is not None
     assert 'dept' in result.columns
@@ -207,14 +208,16 @@ def test_basics_8_join():
         'amount':      [500, 300, 700, 200]
     })
 
-    result = None
     con = duckdb.connect()
-    # --- 코드를 작성하세요 ---
-    # con.register('customers', customers)
-    # con.register('orders', orders)
-    # sql = "..."
-    # result = con.execute(sql).fetchdf()
-    # -----------------------
+    con.register('customers', customers)
+    con.register('orders', orders)
+    sql = """
+    SELECT c.name, o.amount
+    FROM customers c
+    LEFT JOIN orders o ON c.id = o.customer_id
+    ORDER BY o.amount DESC
+    """
+    result = con.execute(sql).fetchdf()
     con.close()
 
     assert result is not None

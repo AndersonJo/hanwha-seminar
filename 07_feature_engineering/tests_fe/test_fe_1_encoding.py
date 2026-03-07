@@ -26,11 +26,8 @@ def label_encode_series(s: pd.Series) -> tuple:
     - encoded_array: fit_transform 결과 (numpy array)
     - encoder: 학습된 LabelEncoder 객체
     """
-    encoded_array = None
-    encoder = None
-    # --- 코드를 작성하세요 ---
-
-    # -----------------------
+    encoder = LabelEncoder()
+    encoded_array = encoder.fit_transform(s)
     return encoded_array, encoder
 
 
@@ -64,10 +61,8 @@ def ordinal_encode_grade(df: pd.DataFrame) -> np.ndarray:
     순서: low=0, medium=1, high=2
     OrdinalEncoder를 사용하고 변환 결과를 1차원 numpy array로 반환하세요.
     """
-    result = None
-    # --- 코드를 작성하세요 ---
-
-    # -----------------------
+    encoder = OrdinalEncoder(categories=[['low', 'medium', 'high']])
+    result = encoder.fit_transform(df[['grade']]).flatten()
     return result
 
 
@@ -95,10 +90,7 @@ def onehot_encode_city(df: pd.DataFrame) -> pd.DataFrame:
     결과는 city_ 접두사가 붙은 열들을 포함하는 DataFrame이어야 합니다.
     pd.get_dummies()를 사용하세요.
     """
-    result = None
-    # --- 코드를 작성하세요 ---
-
-    # -----------------------
+    result = pd.get_dummies(df[['city']], columns=['city'], dtype=float)
     return result
 
 
@@ -132,10 +124,8 @@ def target_encode(df: pd.DataFrame, column: str, target: str) -> pd.Series:
     df의 column을 target 변수의 평균으로 인코딩하세요.
     각 카테고리 값을 해당 카테고리의 target 평균으로 대체한 Series를 반환하세요.
     """
-    result = None
-    # --- 코드를 작성하세요 ---
-
-    # -----------------------
+    target_means = df.groupby(column)[target].mean()
+    result = df[column].map(target_means)
     return result
 
 
@@ -165,10 +155,8 @@ def frequency_encode(df: pd.DataFrame, column: str) -> pd.Series:
     """
     df의 column에서 각 카테고리의 등장 빈도(count)로 대체한 Series를 반환하세요.
     """
-    result = None
-    # --- 코드를 작성하세요 ---
-
-    # -----------------------
+    freqs = df[column].value_counts()
+    result = df[column].map(freqs)
     return result
 
 

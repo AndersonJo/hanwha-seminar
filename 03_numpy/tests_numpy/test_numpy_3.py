@@ -6,10 +6,7 @@ def test_numpy_1_boolean_masking():
     주어진 배열에서 50 초과 (50 불포함)인 값들만 추출하여 `answer_arr`에 할당하세요.
     """
     arr = np.array([10, 55, 30, 80, 45, 90, 20])
-    answer_arr = None
-    # --- 코드를 작성하세요 ---
-    
-    # -----------------------
+    answer_arr = arr[arr > 50]
 
     np.testing.assert_array_equal(answer_arr, np.array([55, 80, 90]))
 
@@ -21,10 +18,7 @@ def test_numpy_2_multiple_conditions():
     (Numpy에서는 파이썬의 `and`, `or` 대신 `&`, `|` 기호를 사용하고 조건들을 괄호()로 묶어야 합니다)
     """
     arr = np.array([5, 20, 35, 65, 70, 85, 100])
-    answer_arr = None
-    # --- 코드를 작성하세요 ---
-    
-    # -----------------------
+    answer_arr = arr[(arr >= 20) & (arr < 70)]
 
     np.testing.assert_array_equal(answer_arr, np.array([20, 35, 65]))
 
@@ -36,10 +30,7 @@ def test_numpy_3_vectorization():
     (for문을 사용하지 말고 Numpy 배열 사칙연산을 수행하세요)
     """
     arr = np.array([1, 2, 3, 4, 5])
-    answer_arr = None
-    # --- 코드를 작성하세요 ---
-    
-    # -----------------------
+    answer_arr = (arr + 15) * 2
 
     np.testing.assert_array_equal(answer_arr, np.array([32, 34, 36, 38, 40]))
 
@@ -59,10 +50,7 @@ def test_numpy_4_broadcasting():
     ])
     vector = np.array([1, 2, 3])
     
-    answer_arr = None
-    # --- 코드를 작성하세요 ---
-    
-    # -----------------------
+    answer_arr = matrix - vector
 
     expected = np.array([
         [9, 18, 27],
@@ -86,12 +74,9 @@ def test_numpy_5_aggregation():
         [7, 8, 9]
     ])
     
-    total_sum = None
-    col_mean = None
-    row_max = None
-    # --- 코드를 작성하세요 ---
-    
-    # -----------------------
+    total_sum = arr_2d.sum()
+    col_mean = np.round(arr_2d.mean(axis=0), 8)
+    row_max = arr_2d.max(axis=1)
 
     assert total_sum == 45
     np.testing.assert_array_equal(col_mean, np.array([4., 5.33333333, 5.66666667]))
